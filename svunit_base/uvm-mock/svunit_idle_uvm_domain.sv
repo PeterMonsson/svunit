@@ -46,8 +46,8 @@ class svunit_idle_uvm_domain extends uvm_domain;
   //-------------------------------------------
   // new svunit domain and scheduler instances
   //-------------------------------------------
-  static local uvm_domain m_svunit_domain;
-  static local uvm_phase  m_svunit_schedule;
+  static local uvm_domain m_svunit_domain = null;
+  static local uvm_phase  m_svunit_schedule = null;
 
   //--------------------------------------------
   // override the get_common_domain to register

@@ -1,5 +1,5 @@
 `define JUNK \
-static string s = `"`FIDDLE_FADDLE`"; \
+static string s = `FIDDLE_FADDLE; \
 $display(s);
 
 module dut;

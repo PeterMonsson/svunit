@@ -9,7 +9,7 @@ from utils import *
 @all_available_simulators()
 def test_sim_0(datafiles, simulator):
     with datafiles.as_cwd():
-        subprocess.check_call(['create_unit_test.pl', '-overwrite', '-out', '-dut_unit_test.sv', 'dut.sv'])
+        subprocess.check_call(['create_unit_test.pl', '-overwrite', '-out', 'dut_unit_test.sv', 'dut.sv'])
 
         subprocess.check_call(['runSVUnit', '-s', simulator])
         expect_testrunner_pass('run.log')
@@ -19,7 +19,7 @@ def test_sim_0(datafiles, simulator):
 @all_available_simulators()
 def test_sim_1(datafiles, simulator):
     with datafiles.as_cwd():
-        subprocess.check_call(['create_unit_test.pl', '-overwrite', '-out', '-dut_unit_test.sv', 'dut.sv'])
+        subprocess.check_call(['create_unit_test.pl', '-overwrite', '-out', 'dut_unit_test.sv', 'dut.sv'])
 
         subprocess.check_call(['runSVUnit', '-s', simulator])
         expect_testrunner_pass('run.log')
@@ -29,7 +29,7 @@ def test_sim_1(datafiles, simulator):
 @all_available_simulators()
 def test_sim_2(datafiles, simulator):
     with datafiles.as_cwd():
-        subprocess.check_call(['create_unit_test.pl', '-overwrite', '-out', '-dut_unit_test.sv', 'dut.sv'])
+        subprocess.check_call(['create_unit_test.pl', '-overwrite', '-out', 'dut_unit_test.sv', 'dut.sv'])
 
         subprocess.check_call(['runSVUnit', '-s', simulator])
         expect_testrunner_pass('run.log')

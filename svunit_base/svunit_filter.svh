@@ -48,9 +48,9 @@ class filter;
 
 
   local function string get_filter_value_from_run_script();
-    string result ="*";
+    string result;
      if (!$value$plusargs("SVUNIT_FILTER=%s", result))
-       $warning("Expected to receive a plusarg called 'SVUNIT_FILTER'");
+       $fatal(1, "Expected to receive a plusarg called 'SVUNIT_FILTER'");
     return result;
   endfunction
 
@@ -92,27 +92,29 @@ class filter;
     for (int i = 0; i < filter.len(); i++)
       if (filter[i] == ".")
         return i;
-    $fatal(0, error_msg);
+    $fatal(1, error_msg);
   endfunction
 
 
   local function void ensure_no_more_dots(string filter, int unsigned first_dot_idx);
     for (int i = first_dot_idx+1; i < filter.len(); i++)
       if (filter[i] == ".")
-        $fatal(0, error_msg);
+        $fatal(1, error_msg);
   endfunction
 
 
   local function void disallow_partial_wildcards(string field_name, string field_value);
+     $display("field name: %s, field_value: %s", field_name, field_value);
+     
     if (field_value != "*")
       if (str_contains_char(field_value, "*"))
-        $fatal(0, $sformatf("Partial wildcards in %s names aren't currently supported", field_name));
+        $fatal(1, $sformatf("Partial wildcards in %s names aren't currently supported", field_name));
   endfunction
 
 
   local static function bit str_contains_char(string s, string c);
     if (c.len() != 1)
-      $fatal(0, "Expected a single character");
+      $fatal(1, "Expected a single character");
     foreach (s[i])
       if (s[i] == c[0])
         return 1;

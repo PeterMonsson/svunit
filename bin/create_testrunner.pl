@@ -175,7 +175,7 @@ sub CreateTestSuite() {
   print OUTFILE "  begin\n";
   print OUTFILE "\n";
   print OUTFILE "    `ifdef RUN_SVUNIT_WITH_UVM_REPORT_MOCK\n";
-  print OUTFILE "      uvm_report_cb::add(null, uvm_report_mock::reports);\n";
+  print OUTFILE "      uvm_report_cb::add(null, uvm_report_mock::get_reports());\n";
   print OUTFILE "    `endif\n";
   print OUTFILE "\n";
   print OUTFILE "    build();\n";

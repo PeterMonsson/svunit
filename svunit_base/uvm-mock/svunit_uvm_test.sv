@@ -40,6 +40,7 @@ class svunit_uvm_test extends uvm_test;
   static local event m_finish;
   static local bit   m_finish_e;
 
+  static local event m_in_pre_reset_e;
   static local bit   m_in_pre_reset;
   static local bit   m_in_main;
 
@@ -66,7 +67,7 @@ class svunit_uvm_test extends uvm_test;
   endfunction
 
   static task wait_for_ready();
-    @(posedge m_in_pre_reset);
+     @m_in_pre_reset_e;
   endtask
 
   static function bit is_running();
@@ -80,6 +81,7 @@ class svunit_uvm_test extends uvm_test;
   task pre_reset_phase(uvm_phase phase);
     phase.raise_objection(null);
     m_in_pre_reset = 1;
+     ->m_in_pre_reset_e;
     if (!m_start_e) @m_start;
     m_start_e = 0;
     phase.drop_objection(null);

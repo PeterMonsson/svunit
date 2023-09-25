@@ -121,7 +121,7 @@ clean();
 my $VERSION = IO::File->new();
 $VERSION->open("$ENV{SVUNIT_INSTALL}/VERSION.txt") || die;
 my $version = $VERSION->getline;
-chomp $version;
+$version =~ s/\015?\012//g;
 push @defines, qq!SVUNIT_VERSION='"$version"'!;
 
 # Extract simulator from PATH if nothing passed as argument
@@ -149,11 +149,19 @@ if (not grep { $_ eq $simulator } qw(xrun irun modelsim riviera vcs dsim qrun xs
   usage()
 }
 
+if ($simulator eq "xsim") {
+    $relativepaths = 1;
+}
+
 # start the command line
 $cmd = "cd $outdir; ";
+
 # add the vdhl switches if necessary
 if ($simulator eq "xsim") {
-  $cmd .= "xvlog --log $vlogfile -sv ";
+  pop(@defines);
+  push @defines, '$version';
+  $cmd = qq!set version {SVUNIT_VERSION="$version"}\n!;
+  $cmd .= "exec xvlog --log $vlogfile -sv ";
   $cmd .= "-f $vhdlfile " if $vhdlfile;
 } elsif ($simulator eq "modelsim" or $simulator eq "riviera") {
   $cmd .= "vlib work; ";
@@ -196,15 +204,13 @@ if ($simulator eq "modelsim" or $simulator eq "riviera") {
   }
   $cmd .= qq! @compileargs; vsim @simargs -lib work -do "run -all; quit" -l $logfile testrunner!;
 } elsif ($simulator eq "xsim") {
-  $cmd .= qq! @compileargs && xelab testrunner -relax -s testrunner -timescale 1ns/1ps && xsim testrunner @simargs  -log $logfile -runall!
+  $cmd .= qq! @compileargs \nexec xelab testrunner -relax -s testrunner -timescale 1ns/1ps \nexec xsim testrunner @simargs -log $logfile -runall!
 } else {
   $cmd .= " @compileargs @simargs -top testrunner";
 }
 
 if ($simulator eq "xsim") {
-  if ($filter ne "*") {
-    $cmd .= " -testplusarg SVUNIT_FILTER=$filter";
-  }
+  $cmd .= " -testplusarg SVUNIT_FILTER=$filter";
 } else {
   $cmd .= " +SVUNIT_FILTER=$filter";
 }
@@ -230,5 +236,13 @@ if (system("$build_cmd")) {
   exit -1;
 }
 print $cmd . "\n";
+
+if ($simulator eq "xsim") {
+    my $run_file;
+    $run_file = IO::File->new();
+    $run_file->open(">$outdir/run.tcl"); 
+    $run_file->print($cmd . "\n");
+    $cmd = "cd $outdir; Vivado -mode batch -source run.tcl"
+}
 system("$cmd");
 system("svunit_user_feedback.pl")

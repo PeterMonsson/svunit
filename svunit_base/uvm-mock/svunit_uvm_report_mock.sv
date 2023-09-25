@@ -17,23 +17,35 @@
 //###########################################################################
 
 class uvm_report_mock;
-  static svunit_uvm_report_mock_expected_actual_container reports = new();
+  static svunit_uvm_report_mock_expected_actual_container reports = null;
 
+  static function svunit_uvm_report_mock_expected_actual_container get_reports();
+     if (reports == null) begin
+	reports = new();
+     end
+     return reports;
+  endfunction
+
+   
   static function void setup();
+    svunit_uvm_report_mock_expected_actual_container reports = get_reports();
     reports.delete();
   endfunction
 
   static function int expected_cnt();
+    svunit_uvm_report_mock_expected_actual_container reports = get_reports();
     return reports.expected.size();
   endfunction
 
   static function int actual_cnt();
+    svunit_uvm_report_mock_expected_actual_container reports = get_reports();
     return reports.actual.size();
   endfunction
 
   `define EXPECT_SEVERITY(NAME, SEV) \
     static function void expect_``NAME(string id="", \
                                        string message=""); \
+      svunit_uvm_report_mock_expected_actual_container reports = get_reports(); \
       reports.expected.push_back('{id, message, SEV}); \
     endfunction
 
@@ -42,10 +54,12 @@ class uvm_report_mock;
   `EXPECT_SEVERITY(fatal,   UVM_FATAL)
 
   static function bit verify_complete();
+    svunit_uvm_report_mock_expected_actual_container reports = get_reports();
     return reports.verify_complete();
   endfunction
 
   static function string dump();
+    svunit_uvm_report_mock_expected_actual_container reports = get_reports();
     return reports.dump();
   endfunction
 endclass
